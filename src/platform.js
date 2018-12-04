@@ -9,6 +9,7 @@ var sprintf          = require('yow/sprintf');
 var isString         = require('yow/is').isString;
 var Timer            = require('yow/timer');
 
+var Outlet             = require('./outlet.js');
 var Lightbulb          = require('./lightbulb.js');
 var WarmWhiteLightbulb = require('./warm-white-lightbulb.js');
 var RgbLightbulb       = require('./rgb-lightbulb.js');
@@ -55,6 +56,9 @@ module.exports = class Platform extends Gateway {
         for (var id in this.gateway.devices) {
             var device = this.gateway.devices[id];
 
+                    this.log(device.type);
+
+
             if (device.type === Ikea.AccessoryTypes.lightbulb) {
 
                 var spectrum = device.lightList[0]._spectrum;
@@ -79,7 +83,10 @@ module.exports = class Platform extends Gateway {
                 }
 
                 this.devices[device.instanceId] = bulb;
+            } else if (device.type === Ikea.AccessoryTypes.plug) {
+                this.devices[device.instanceId] = new Outlet(this, device);;
             }
+
         }
 
         return Promise.resolve();
